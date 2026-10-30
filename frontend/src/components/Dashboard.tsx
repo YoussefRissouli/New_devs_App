@@ -10,6 +10,7 @@ interface Property {
 const Dashboard: React.FC = () => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [selectedProperty, setSelectedProperty] = useState('');
+  const [reportMonth, setReportMonth] = useState(() => new Date().toISOString().slice(0, 7));
 
   useEffect(() => {
     let cancelled = false;
@@ -60,11 +61,20 @@ const Dashboard: React.FC = () => {
                   ))}
                 </select>
               </div>
+              <div className="flex flex-col sm:items-end">
+                <label className="text-xs font-medium text-gray-700 mb-1">Report Month</label>
+                <input
+                  type="month"
+                  value={reportMonth}
+                  onChange={(e) => setReportMonth(e.target.value)}
+                  className="block w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
+                />
+              </div>
             </div>
           </div>
 
           <div className="space-y-6">
-            {selectedProperty && <RevenueSummary propertyId={selectedProperty} />}
+            {selectedProperty && <RevenueSummary propertyId={selectedProperty} reportMonth={reportMonth} />}
           </div>
         </div>
       </div>

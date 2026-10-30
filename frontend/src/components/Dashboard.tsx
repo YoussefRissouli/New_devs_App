@@ -1,16 +1,33 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { RevenueSummary } from "./RevenueSummary";
+import { SecureAPI } from "../lib/secureApi";
 
-const PROPERTIES = [
-  { id: 'prop-001', name: 'Beach House Alpha' },
-  { id: 'prop-002', name: 'City Apartment Downtown' },
-  { id: 'prop-003', name: 'Country Villa Estate' },
-  { id: 'prop-004', name: 'Lakeside Cottage' },
-  { id: 'prop-005', name: 'Urban Loft Modern' }
-];
+interface Property {
+  id: string;
+  name: string;
+}
 
 const Dashboard: React.FC = () => {
-  const [selectedProperty, setSelectedProperty] = useState('prop-001');
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [selectedProperty, setSelectedProperty] = useState('');
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadProperties = async () => {
+      const tenantProperties = await SecureAPI.getDashboardProperties();
+      if (!cancelled) {
+        setProperties(tenantProperties);
+        setSelectedProperty(tenantProperties[0]?.id || '');
+      }
+    };
+
+    loadProperties().catch(console.error);
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <div className="p-4 lg:p-6 min-h-full">
@@ -33,9 +50,10 @@ const Dashboard: React.FC = () => {
                 <select
                   value={selectedProperty}
                   onChange={(e) => setSelectedProperty(e.target.value)}
+                  disabled={!properties.length}
                   className="block w-full sm:w-auto min-w-[200px] px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                 >
-                  {PROPERTIES.map((property) => (
+                  {properties.map((property) => (
                     <option key={property.id} value={property.id}>
                       {property.name}
                     </option>
@@ -46,7 +64,7 @@ const Dashboard: React.FC = () => {
           </div>
 
           <div className="space-y-6">
-            <RevenueSummary propertyId={selectedProperty} />
+            {selectedProperty && <RevenueSummary propertyId={selectedProperty} />}
           </div>
         </div>
       </div>

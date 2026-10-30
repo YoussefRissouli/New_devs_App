@@ -45,8 +45,3 @@ Use March 2024 when checking the supplied seed data.
 | Ocean Rentals | Urban Loft Modern | USD 3,256.00 and 3 bookings |
 
 To verify tenant isolation, load `prop-001` for March 2024 as Sunset, then sign in as Ocean and load the same property ID. Sunset should receive USD 2,250.00. Ocean should receive USD 0.00.
-
-
-## Notes
-
-`NOTES.md` contains a short explanation of the revenue, tenant isolation, timezone, and precision fixes, along with steps for demonstrating each one.
